@@ -7,12 +7,12 @@ let b:did_indent = 1
 " Local defaults
 setlocal expandtab
 setlocal indentexpr=GetRocIndent()
-setlocal indentkeys+=0=else,0=if,0=of,0=import,0=is,0=type,0\|,0},0\],0),=-},0=in
+setlocal indentkeys+=0=else,0=if,0=is,0=app,0=then,0},0\],0),0\|
 setlocal nolisp
 setlocal nosmartindent
 
 " Comment formatting
-setlocal comments=s1fl:{-,mb:\ ,ex:-},:--
+setlocal comments=s1fl:#
 
 " Only define the function once.
 if exists('*GetRocIndent')
@@ -43,14 +43,14 @@ function! GetRocIndent()
 
 	" Indent if current line begins with 'else':
 	elseif l:line =~# '^\s*else\>'
-		if l:lline !~# '^\s*\(if\|is\)\>'
+		if l:lline !~# '^\s*\(if\|then\)\>'
 			return s:FindPair('\<if\>', '', '\<else\>')
 		endif
 
-	" Indent if current line begins with 'is':
-	elseif l:line =~# '^\s*is\>'
+	" Indent if current line begins with 'then':
+	elseif l:line =~# '^\s*then\>'
 		if l:lline !~# '^\s*\(if\|else\)\>'
-			return s:FindPair('\<if\>', '', '\<is\>')
+			return s:FindPair('\<if\>', '', '\<then\>')
 		endif
 
 	" HACK: Indent lines in when with nearest when clause:
@@ -58,43 +58,14 @@ function! GetRocIndent()
 		return indent(search('^\s*when', 'bWn')) + &shiftwidth
 
 	" HACK: Don't change the indentation if the last line is a comment.
-	elseif l:lline =~# '^\s*--'
+	elseif l:lline =~# '^\s*#'
 		return l:ind
-
-	" Align the end of block comments with the start
-	elseif l:line =~# '^\s*-}'
-		return indent(search('{-', 'bWn'))
-
-	" Indent double shift after let with an empty rhs
-	elseif l:lline =~# '\<let\>.*\s=$'
-		return l:ind + 4 + &shiftwidth
-
-	" Align 'in' with the parent let.
-	elseif l:line =~# '^\s*in\>'
-		return indent(search('^\s*let', 'bWn'))
-
-	" Align bindings with the parent let.
-	elseif l:lline =~# '\<let\>'
-		return l:ind + 4
-
-	" Align bindings with the parent in.
-	elseif l:lline =~# '^\s*in\>'
-		return l:ind + 4
 
 	endif
 
 	" Add a 'shiftwidth' after lines ending with:
-	if l:lline =~# '\(|\|=\|->\|<-\|(\|\[\|{\|\<\(of\|else\|if\|is\)\)\s*$'
+	if l:lline =~# '\(|\|=\|->\|<-\|(\|\[\|{\|\<\(is\|else\|if\|then\)\)\s*$'
 		let l:ind = l:ind + &shiftwidth
-
-	" Add a 'shiftwidth' after lines starting with type ending with '=':
-	elseif l:lline =~# '^\s*type' && l:line =~# '^\s*='
-		let l:ind = l:ind + &shiftwidth
-
-	" Back to normal indent after comments:
-	elseif l:lline =~# '-}\s*$'
-		call search('-}', 'bW')
-		let l:ind = indent(searchpair('{-', '', '-}', 'bWn', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string"'))
 
 	" Ident some operators if there aren't any starting the last line.
 	elseif l:line =~# '^\s*\(!\|&\|(\|`\|+\||\|{\|[\|,\)=' && l:lline !~# '^\s*\(!\|&\|(\|`\|+\||\|{\|[\|,\)=' && l:lline !~# '^\s*$'

@@ -1,6 +1,6 @@
 " Keywords
 syn keyword rocConditional else if of then
-syn keyword rocImport app interface exposes imports
+syn keyword rocImport app provides interface exposes imports
 
 " Operators
 syn match rocOperator contained "\([-!#$%`&\*\+./<=>\?@\\^|~:]\|\<_\>\)"

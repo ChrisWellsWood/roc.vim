@@ -2,8 +2,8 @@
 
 _This plugin is a WIP!_
 
-This plugin uses Elm syntax highlighting as its basis, and borrowed heavily from the
-excellent [`ElmCast/elm-vim`](https://github.com/ElmCast/elm-vim) plugin.
+This plugin borrowed heavily from the excellent
+[`ElmCast/elm-vim`](https://github.com/ElmCast/elm-vim) plugin.
 
 ## Features
 

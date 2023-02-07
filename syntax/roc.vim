@@ -1,5 +1,5 @@
 " Keywords
-syn keyword rocConditional else if of then
+syn keyword rocConditional else if is then
 syn keyword rocImport app provides interface exposes imports
 
 " Operators
